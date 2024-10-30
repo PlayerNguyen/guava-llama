@@ -17,7 +17,15 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: "20"
+
+      - name: Cache Ollama models
+        uses: actions/cache@v3
+        with:
+          path: ~/.ollama/models # Adjust to actual Ollama model path
+          key: ${{ runner.os }}-ollama-models
+          restore-keys: |
+            ${{ runner.os }}-ollama-models
 
       - name: Install dependencies
         run: npm install
@@ -26,5 +34,11 @@ jobs:
         run: |
           curl -fsSL https://ollama.com/install.sh | sh
 
+      - name: Pull llama3.2 model
+        run: ollama pull llama3.2
+
+      - name: Check version Ollama
+        run: ollama -v
+
       - name: Run unit tests
-        run: npm run test:unit
+        run: npm run test
