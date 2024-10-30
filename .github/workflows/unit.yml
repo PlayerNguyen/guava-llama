@@ -37,5 +37,11 @@ jobs:
       - name: Pull llama3.2 model
         run: ollama pull llama3.2
 
+      - name: Serve ollama
+        run: ollama serve
+
+      - name: Check version Ollama
+        run: ollama -v
+
       - name: Run unit tests
         run: npm run test
