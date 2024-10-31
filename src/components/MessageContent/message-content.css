@@ -1,0 +1,8 @@
+.message-content-inner {
+  /* background: #0; */
+  overflow-x: hidden;
+  max-width: 100%;
+}
+.message-content-inner > pre {
+  overflow: auto;
+}

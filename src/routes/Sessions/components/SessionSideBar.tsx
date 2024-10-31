@@ -2,6 +2,7 @@ import Session from "@/lib/Session";
 import { useSessionStore } from "@/stores/SessionStore";
 import { RandomUtils } from "@/utils/RandomUtils";
 import { ActionIcon, Flex, Text } from "@mantine/core";
+import clsx from "clsx";
 import { TbEdit, TbTrash } from "react-icons/tb";
 
 export default function SessionSideBar() {
@@ -46,6 +47,7 @@ SessionSideBar.Header = function () {
         </Text>
       </Flex>
       <ActionIcon
+        className={clsx(`btn-create-session`)}
         variant="subtle"
         size={"md"}
         onClick={handleCreateSession}
