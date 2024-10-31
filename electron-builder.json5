@@ -2,7 +2,7 @@
  * @see https://www.electron.build/configuration/configuration
  */
 {
-  "appId": "YourAppID",
+  "appId": "com.github.playernguyen.guavallama",
   "asar": true,
   "directories": {
     "output": "release/${version}"

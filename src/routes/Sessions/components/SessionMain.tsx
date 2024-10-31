@@ -1,8 +1,13 @@
+import MessageContent from "@/components/MessageContent";
 import ModelSelect from "@/components/ModelSelect";
+import { MessageResponse, OllamaResponseMessage } from "@/lib/Provider";
+import { useAppStore } from "@/stores/AppStore";
+import useChatStore from "@/stores/ChatStore";
 import { useSessionStore } from "@/stores/SessionStore";
 import { RandomUtils } from "@/utils/RandomUtils";
 import { Button, Flex, Text, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { marked } from "marked";
 
 export default function SessionMain() {
   return <></>;
@@ -45,12 +50,28 @@ SessionMain.MessageContent = () => {
 
   return (
     <Flex
-      className="bg-neutral-400 h-[calc(80vh-64px)] overflow-y-auto"
+      className="bg-neutral-100 h-[calc(80vh-64px)] overflow-y-auto px-4 py-2"
+      gap={6}
       direction={"column"}
     >
-      {activeSession.messages.map((message) => (
-        <Text>{message.content}</Text>
-      ))}
+      {activeSession.messages.map((message) => {
+        if (message.type === "user") {
+          return (
+            <MessageContent.User
+              content={message.content}
+              key={message.id}
+              label="User"
+            />
+          );
+        }
+        return (
+          <MessageContent.System
+            content={marked.parse(message.content, { async: false })}
+            key={message.id}
+            label="Bot"
+          />
+        );
+      })}
     </Flex>
   );
 };
@@ -58,6 +79,9 @@ SessionMain.MessageContent = () => {
 SessionMain.Interaction = () => {
   const { updateSession, getActiveSession, activeSessionId } =
     useSessionStore();
+
+  const { sendMessage } = useChatStore();
+  const { provider } = useAppStore();
 
   const currentActiveSession = getActiveSession();
 
@@ -103,7 +127,36 @@ SessionMain.Interaction = () => {
       at: new Date(),
       id: RandomUtils.generateRandomReadableId(),
     });
+
     updateSession(activeSessionId!, curActiveSession!);
+
+    // Create response message
+    const clonedCurActiveSession = structuredClone(curActiveSession);
+    const curMessageIndex =
+      clonedCurActiveSession.messages.push({
+        at: new Date(),
+        id: RandomUtils.generateRandomReadableId(),
+        content: "",
+        type: "bot",
+      }) - 1;
+
+    // Send message
+    sendMessage(
+      provider,
+      {
+        model: values.model,
+        prompt: values.question,
+      },
+      (chunk: MessageResponse) => {
+        const message = chunk as any as OllamaResponseMessage;
+        console.log(message);
+
+        const content = message.response;
+        // console.log(content);
+        clonedCurActiveSession.messages[curMessageIndex].content += content;
+        updateSession(activeSessionId!, clonedCurActiveSession);
+      }
+    );
 
     // Clear the chat input field after submission
     // form.reset();

@@ -1,4 +1,6 @@
+import { ollama } from "@/types/ollama";
 import { Model } from "../Model";
+import { OllamaResolver, StreamResponseResolver } from "../Resolver";
 
 export type RequestOptions = {
   abortController?: AbortController;
@@ -30,6 +32,8 @@ export type RequestMessage = {
  * @version 1.0
  */
 export interface Provider<MessageRequestType = any, MessageResponseType = any> {
+  resolver: StreamResponseResolver<MessageResponseType>;
+
   createStreamChat(
     message: MessageRequestType,
     options?: RequestOptions
@@ -53,27 +57,28 @@ export type OllamaRequestMessage = RequestMessage & {
   images?: string[];
 };
 
+export type MessageResponse = {};
+
 /**
  * Interface describing the data returned from the ResponseStream.
  *
  * This object contains various metrics and information related to the response generation process,
  * including total duration, model loading time, prompt evaluation statistics, and conversation context.
  */
-type OllamaResponseMessage = Partial<{
-  total_duration: number;
-  load_duration: number;
-  prompt_eval_count: number;
-  prompt_eval_duration: number;
-  eval_count: number;
-  eval_duration: number;
-  context: string;
-  response: any;
-}>;
+export type OllamaResponseMessage = MessageResponse & ollama.Response;
 
 export class OllamaProvider
   implements Provider<OllamaRequestMessage, OllamaResponseMessage>
 {
   private base_host_url: string;
+  public resolver: StreamResponseResolver<ollama.Response> =
+    new OllamaResolver();
+
+  /**
+   * Constructs a new Ollama type provider.
+   *
+   * @param base_host_url A base url to send and receive messages.
+   */
   constructor(base_host_url?: string) {
     this.base_host_url = base_host_url || "http://localhost:11434/api";
   }
@@ -82,6 +87,10 @@ export class OllamaProvider
     message: OllamaRequestMessage,
     options?: RequestOptions
   ): Promise<ReadableStream<Uint8Array> | null> {
+    console.log(
+      `[OllamaProvider] Creates a stream chat with prompt ${message.prompt}`
+    );
+
     const response = await fetch(this.base_host_url + "/generate", {
       method: "POST",
       headers: {
@@ -96,6 +105,10 @@ export class OllamaProvider
       }),
       signal: options?.abortController?.signal || null,
     });
+
+    console.log(
+      `[OllamaProvider] Respond ${response.status} with status text: ${response.statusText}`
+    );
 
     if (!response.ok) {
       throw new Error(await response.text());

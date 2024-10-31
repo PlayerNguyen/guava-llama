@@ -5,6 +5,7 @@ import { create } from "zustand";
 export type AppStoreType = {
   sessions: Session[];
   provider: Provider;
+  
   // setActiveSession: (session: Session) => void;
 };
 
