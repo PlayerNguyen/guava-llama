@@ -3,6 +3,26 @@ import { Model } from "../Model";
 export type RequestOptions = {
   abortController?: AbortController;
 };
+
+/**
+ * Represents an interface of the request message
+ * that will send to the server backend.
+ */
+export type RequestMessage = {
+  /**
+   * Represents specific model that will be used.
+   *
+   * - For `Ollama`, it could be llama3.2, llava...
+   * - For `OpenAI`, it could be gpt-3.5-turbo, gpt-4...
+   */
+  model: string;
+  /**
+   * Represents a message that will be prompted
+   * to the backend.
+   */
+  prompt?: string;
+};
+
 /**
  * Represents a API provider that provides the ability to send and receive messages.
  *
@@ -22,9 +42,13 @@ export interface Provider<MessageRequestType = any, MessageResponseType = any> {
   fetchModels(): Promise<Model[]>;
 }
 
-type OllamaRequestMessage = {
-  model: string;
-  prompt?: string;
+/**
+ * Represents an `Ollama` request body message backend.
+ *
+ * Reference:
+ * - {@link https://github.com/ollama/ollama/blob/main/docs/api.md#parameters}
+ */
+export type OllamaRequestMessage = RequestMessage & {
   suffix?: string;
   images?: string[];
 };
