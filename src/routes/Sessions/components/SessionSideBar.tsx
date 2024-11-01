@@ -3,6 +3,7 @@ import { useSessionStore } from "@/stores/SessionStore";
 import { RandomUtils } from "@/utils/RandomUtils";
 import { ActionIcon, Flex, Text } from "@mantine/core";
 import clsx from "clsx";
+import dayjs from "dayjs";
 import { TbEdit, TbTrash } from "react-icons/tb";
 
 export default function SessionSideBar() {
@@ -86,9 +87,13 @@ SessionSideBar.Container = function ({ children }: SessionListContainerProps) {
 
 export type SessionSideBarItemProps = {
   session: Session;
+  isActive: boolean;
 };
 
-SessionSideBar.Item = function ({ session }: SessionSideBarItemProps) {
+SessionSideBar.Item = function ({
+  session,
+  isActive,
+}: SessionSideBarItemProps) {
   const { setActiveSessionId } = useSessionStore();
 
   function handleSwitchActiveSession() {
@@ -98,15 +103,29 @@ SessionSideBar.Item = function ({ session }: SessionSideBarItemProps) {
   return (
     <Flex
       direction={`row`}
-      className="session-item group transition-all px-4 py-2 border-0 border-b border-solid border-neutral-300 bg-neutral-100 hover:bg-neutral-200 select-none cursor-pointer"
+      className={clsx(
+        `session-item group transition-all px-4 py-2`,
+        `border-0 border-b border-solid border-neutral-300`,
+        `bg-neutral-100 hover:bg-neutral-200 select-none`,
+        `cursor-pointer`,
+        // Add active logic
+        { "bg-neutral-300": isActive }
+      )}
       onClick={handleSwitchActiveSession}
     >
-      <Flex direction={`column`} gap={2} className="flex-1">
-        <Text fw={"bold"} size="sm" className="leading-tight text-neutral-800">
+      <Flex direction={`column`} gap={4} className="flex-1">
+        <Text
+          fw={"bold"}
+          size="sm"
+          className={clsx(`leading-tight text-neutral-800`, `line-clamp-2`)}
+        >
           {session.title || "Untitled chat"}
         </Text>
-        <Text size="xs" className="text-neutral-700 font-medium">
-          12:34:56
+        <Text size="xs" className="text-neutral-400 font-bold">
+          {session.createdAt !== undefined
+            ? dayjs(session.createdAt).fromNow(true)
+            : "Undefined"}{" "}
+          • {session.model || ""}
         </Text>
       </Flex>
       <Flex direction={`column`} align={`center`} justify={`center`}>
@@ -123,7 +142,7 @@ SessionSideBar.Item = function ({ session }: SessionSideBarItemProps) {
 };
 
 SessionSideBar.Content = function () {
-  const { sessions } = useSessionStore();
+  const { sessions, activeSessionId } = useSessionStore();
 
   return (
     <Flex
@@ -134,7 +153,11 @@ SessionSideBar.Content = function () {
         .reverse()
         .map((session) => {
           return (
-            <SessionSideBar.Item session={session} key={session.uniqueId} />
+            <SessionSideBar.Item
+              session={session}
+              key={session.uniqueId}
+              isActive={activeSessionId === session.uniqueId}
+            />
           );
         })}
     </Flex>

@@ -8,6 +8,11 @@ import { useEffect } from "react";
 import { useAppStore } from "./stores/AppStore";
 import { useModelStore } from "./stores/ModelStore";
 
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
+
 /**
  * The App component serves as the top-level entry point for the application.
  *

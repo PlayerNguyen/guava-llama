@@ -28,17 +28,23 @@ SessionMain.Header = () => {
       align={`center`}
       gap={6}
       className={clsx(
-        `w-full bg-neutral-100 h-[64px] px-6 shadow-md`,
-        `border-0 border-b border-solid border-neutral-200`
+        `w-full bg-neutral-100 h-[64px] px-6 shadow-sm`,
+        `border-0 border-b border-solid border-neutral-300`,
+        `z-30`
       )}
     >
-      <Text size="sm" fw={"bold"} className="text-neutral-500">
+      <Text size="xs" fw={"bold"} className="text-neutral-300">
         <span className="text-underline decoration-neutral-800">
           #{activeSessionId}
         </span>
       </Text>
       <Text>·</Text>
-      <Text size="sm">{currentActiveSession?.title || "Untitled chat"}</Text>
+      <Text
+        size="xs"
+        className={clsx(`line-clamp-2 font-bold text-neutral-700`)}
+      >
+        {currentActiveSession?.title || "Untitled chat"}
+      </Text>
     </Flex>
   );
 };
@@ -153,7 +159,7 @@ SessionMain.Interaction = () => {
       },
       (chunk: MessageResponse) => {
         const message = chunk as any as OllamaResponseMessage;
-        console.log(message);
+        // console.log(message);
 
         const content = message.response;
         // console.log(content);
