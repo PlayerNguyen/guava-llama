@@ -1,7 +1,7 @@
 import Session from "@/lib/Session";
 import { useSessionStore } from "@/stores/SessionStore";
 import { RandomUtils } from "@/utils/RandomUtils";
-import { ActionIcon, Flex, Text } from "@mantine/core";
+import { ActionIcon, Flex, Text, UnstyledButton } from "@mantine/core";
 import clsx from "clsx";
 import dayjs from "dayjs";
 import { TbEdit, TbTrash } from "react-icons/tb";
@@ -101,43 +101,55 @@ SessionSideBar.Item = function ({
   }
 
   return (
-    <Flex
-      direction={`row`}
+    <UnstyledButton
       className={clsx(
-        `session-item group transition-all px-4 py-2`,
-        `border-0 border-b border-solid border-neutral-300`,
-        `bg-neutral-100 hover:bg-neutral-200 select-none`,
-        `cursor-pointer`,
-        // Add active logic
-        { "bg-neutral-300": isActive }
+        `session-item-wrapper group outline-none focus-visible:outline-none`
       )}
       onClick={handleSwitchActiveSession}
     >
-      <Flex direction={`column`} gap={4} className="flex-1">
-        <Text
-          fw={"bold"}
-          size="sm"
-          className={clsx(`leading-tight text-neutral-800`, `line-clamp-2`)}
-        >
-          {session.title || "Untitled chat"}
-        </Text>
-        <Text size="xs" className="text-neutral-400 font-bold">
-          {session.createdAt !== undefined
-            ? dayjs(session.createdAt).fromNow(true)
-            : "Undefined"}{" "}
-          • {session.model || ""}
-        </Text>
+      <Flex
+        direction={`row`}
+        className={clsx(
+          `session-item group transition-all px-4 py-2`,
+          `border-0 border-b border-solid border-neutral-300`,
+          `bg-neutral-100 hover:bg-neutral-200 select-none`,
+          `cursor-pointer`,
+          // Add active logic
+          { "bg-neutral-300": isActive },
+          `outline-none group-focus:bg-neutral-200`
+        )}
+      >
+        <Flex direction={`column`} gap={4} className="flex-1">
+          <Text
+            fw={"bold"}
+            size="sm"
+            className={clsx(`leading-tight text-neutral-800`, `line-clamp-2`)}
+          >
+            {session.title || "Untitled chat"}
+          </Text>
+          <Text size="xs" className="text-neutral-400 font-bold">
+            {session.createdAt !== undefined
+              ? dayjs(session.createdAt).fromNow(true)
+              : "Undefined"}{" "}
+            • {session.model || ""}
+          </Text>
+        </Flex>
+        <Flex direction={`column`} align={`center`} justify={`center`}>
+          <ActionIcon
+            radius={`xl`}
+            variant="subtle"
+            className={clsx(
+              `transition-all group/button text-transparent`,
+              `hover:text-neutral-950 group-hover:text-neutral-400 hover:bg-red-300`,
+              `focus:text-neutral-950 group-focus:text-neutral-400 focus:bg-red-300`,
+              `outline-none focus-visible:outline-none`
+            )}
+          >
+            <TbTrash className="transition-all ease-in-out group-hover/button:text-red-600 group-focus/button:text-red-600" />
+          </ActionIcon>
+        </Flex>
       </Flex>
-      <Flex direction={`column`} align={`center`} justify={`center`}>
-        <ActionIcon
-          radius={`xl`}
-          variant="subtle"
-          className="transition-all group/button hover:text-neutral-950 group-hover:text-neutral-400 text-transparent hover:bg-red-300"
-        >
-          <TbTrash className="transition-all ease-in-out group-hover/button:text-red-600" />
-        </ActionIcon>
-      </Flex>
-    </Flex>
+    </UnstyledButton>
   );
 };
 
