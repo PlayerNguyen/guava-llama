@@ -37,7 +37,13 @@ SessionSideBar.Header = function () {
 
   return (
     <Flex
-      className="bg-neutral-100 p-4 shadow-sm border-0 border-b border-neutral-300 border-solid z-50 select-none"
+      className={clsx(
+        // Primary background
+        `bg-neutral-100 p-4 shadow-sm z-50 select-none`,
+        // Border improvement
+        `border-0 border-b border-neutral-300 border-solid`,
+        `h-[64px]`
+      )}
       justify={"center"}
       align={"center"}
     >
@@ -67,7 +73,11 @@ SessionSideBar.Container = function ({ children }: SessionListContainerProps) {
   return (
     <Flex
       direction={"column"}
-      className="bg-neutral-200 min-w-[25vw] h-[100vh] w-1/3"
+      className={clsx(
+        `bg-neutral-200 min-w-[25vw] h-[100vh] w-1/3`,
+        `border-0 border-r border-solid border-neutral-300`,
+        `shadow-md`
+      )}
     >
       {children}
     </Flex>

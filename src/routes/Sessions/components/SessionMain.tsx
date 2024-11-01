@@ -7,6 +7,7 @@ import { useSessionStore } from "@/stores/SessionStore";
 import { RandomUtils } from "@/utils/RandomUtils";
 import { Button, Flex, Text, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import clsx from "clsx";
 import { marked } from "marked";
 
 export default function SessionMain() {
@@ -26,7 +27,10 @@ SessionMain.Header = () => {
       direction={"row"}
       align={`center`}
       gap={6}
-      className="w-full bg-neutral-100 h-[64px] px-6 shadow-sm"
+      className={clsx(
+        `w-full bg-neutral-100 h-[64px] px-6 shadow-md`,
+        `border-0 border-b border-solid border-neutral-200`
+      )}
     >
       <Text size="sm" fw={"bold"} className="text-neutral-500">
         <span className="text-underline decoration-neutral-800">
